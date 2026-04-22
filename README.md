@@ -29,11 +29,11 @@ CoruscantOS/
   ui-shell/
 ```
 
-## Secciones del sistema (explicacion)
+## Secciones del sistema (explicación)
 
-### 1) `docs/` - Documentacion de arquitectura y ejecucion
+### 1) `docs/` - Documentación de arquitectura y ejecución
 
-Reune la definicion funcional y tecnica del proyecto:
+Reúne la definición funcional y técnica del proyecto:
 
 - `01-vision.md`: objetivo del producto, principios y alcance del MVP.
 - `02-architecture.md`: capas del sistema (kernel, base Linux, display/compositor, shell y apps).
@@ -46,31 +46,31 @@ Reune la definicion funcional y tecnica del proyecto:
 Contiene la base Linux sobre postmarketOS/Alpine y perfiles de dispositivo.
 Actualmente define el target inicial virtual para validar el arranque, el pipeline de imagen y la integracion de la shell.
 
-### 3) `ui-shell/` - Interfaz grafica (Coruscant Shell)
+### 3) `ui-shell/` - Interfaz gráfica (Coruscant Shell)
 
 Implementa el frontend de la experiencia movil (HTML/CSS/JS), construido con Vite.
-Aqui se desarrolla la capa visible del sistema: pantalla de bloqueo, home, dock, quick settings y transiciones.
+Aquí se desarrolla la capa visible del sistema: pantalla de bloqueo, home, dock, quick settings y transiciones.
 
-### 4) `scripts/` - Automatizacion operativa
+### 4) `scripts/` - Automatización operativa
 
 Incluye scripts para preparar el entorno, compilar imagenes y ejecutar QEMU:
 
 - `setup-host.sh`: prepara dependencias base en Linux.
-- `build-image.sh`: flujo de construccion de imagen.
-- `run-qemu.sh`: arranque de la imagen en emulacion ARM64.
+- `build-image.sh`: flujo de construcción de imagen.
+- `run-qemu.sh`: arranque de la imagen en emulación ARM64.
 - `setup-wsl.ps1` y `dev-ui.cmd`: soporte de flujo en Windows/WSL.
 
 ## Mapa de capas del sistema
 
-Para ubicar rapidamente cada bloque:
+Para ubicar rápidamente cada bloque:
 
 1. **Kernel + drivers** -> base Linux del dispositivo virtual/real.
 2. **Base system (postmarketOS/Alpine)** -> servicios y userland.
-3. **Display/compositor** -> stack grafico de render.
+3. **Display/compositor** -> stack gráfico de render.
 4. **Coruscant Shell (`ui-shell/`)** -> experiencia de usuario.
 5. **Apps del sistema** -> modulos funcionales (iterativos en roadmap).
 
-## Inicio rapido
+## Inicio rápido
 
 1. Revisa `docs/03-build-qemu.md`.
 2. Si estas en Windows, ejecuta `scripts/setup-wsl.ps1`.
