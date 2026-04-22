@@ -53,7 +53,7 @@ Aquí se desarrolla la capa visible del sistema: pantalla de bloqueo, home, dock
 
 ### 4) `scripts/` - Automatización operativa
 
-Incluye scripts para preparar el entorno, compilar imagenes y ejecutar QEMU:
+Incluye scripts para preparar el entorno, compilar imágenes y ejecutar QEMU:
 
 - `setup-host.sh`: prepara dependencias base en Linux.
 - `build-image.sh`: flujo de construcción de imágenes.
@@ -68,12 +68,12 @@ Para ubicar rápidamente cada bloque:
 2. **Base system (postmarketOS/Alpine)** -> servicios y userland.
 3. **Display/compositor** -> stack gráfico de render.
 4. **Coruscant Shell (`ui-shell/`)** -> experiencia de usuario.
-5. **Apps del sistema** -> modulos funcionales (iterativos en roadmap).
+5. **Apps del sistema** -> módulos funcionales (iterativos en roadmap).
 
 ## Inicio rápido
 
 1. Revisa `docs/03-build-qemu.md`.
-2. Si estas en Windows, ejecuta `scripts/setup-wsl.ps1`.
+2. Si estás en Windows, ejecuta `scripts/setup-wsl.ps1`.
 3. Configura host Linux para build de postmarketOS.
 4. Para UI local, ejecuta `scripts/dev-ui.cmd`.
 5. Construye imagen aarch64.
