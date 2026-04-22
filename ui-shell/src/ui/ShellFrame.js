@@ -1,16 +1,5 @@
-const apps = [
-  { id: "calculator", label: "Calculadora", icon: "icon-calc" },
-  { id: "weather", label: "Clima", icon: "icon-weather" },
-  { id: "stopwatch", label: "Cronometro", icon: "icon-stopwatch" },
-  { id: "maps", label: "Maps", icon: "icon-maps" },
-  { id: "music", label: "Music", icon: "icon-music" },
-  { id: "camera", label: "Camera", icon: "icon-camera" },
-  { id: "files", label: "Files", icon: "icon-files" },
-  { id: "settings", label: "Settings", icon: "icon-settings" }
-];
-
-export function renderShell(root) {
-  root.innerHTML = `
+export function renderShellFrame(apps) {
+  return `
     <main class="phone-frame is-locked" data-view="home">
       <header class="status-bar">
         <button class="status-pill js-open-quick" type="button">09:41</button>
@@ -79,3 +68,23 @@ export function renderShell(root) {
   `;
 }
 
+export function renderSwitcher(recentApps) {
+  if (!recentApps.length) {
+    return "<p class=\"switcher-empty\">Aun no hay apps abiertas en esta sesion.</p>";
+  }
+
+  return `
+    <div class="switcher-grid">
+      ${recentApps
+        .map(
+          (app) => `
+        <article class="switcher-card">
+          <strong>${app}</strong>
+          <p>Estado: en memoria</p>
+        </article>
+      `
+        )
+        .join("")}
+    </div>
+  `;
+}
