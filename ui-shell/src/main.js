@@ -13,16 +13,15 @@ root.innerHTML = renderShellFrame(appManager.getAllApps());
 const frame = root.querySelector(".phone-frame");
 const lockCard = root.querySelector(".js-lock");
 const quickPanel = root.querySelector(".js-quick");
-const stageTitle = root.querySelector(".js-app-title");
-const stageCopy = root.querySelector(".js-app-copy");
 const appWindow = root.querySelector(".js-app-window");
 const lockError = root.querySelector(".js-lock-error");
 const passInput = root.querySelector(".js-pass-input");
 
+// Intro Animation
 gsap.fromTo(
   ".phone-frame",
-  { scale: 0.96, opacity: 0 },
-  { scale: 1, opacity: 1, duration: 0.55, ease: "power2.out" }
+  { scale: 0.9, opacity: 0, y: 40 },
+  { scale: 1, opacity: 1, y: 0, duration: 1.2, ease: "expo.out" }
 );
 
 // Event Delegation
@@ -37,7 +36,6 @@ root.addEventListener("click", (event) => {
   if (target.classList.contains("js-nav")) navigate(target.dataset.target);
   if (target.classList.contains("js-app")) openApp(target.dataset.app);
 
-  // App specific actions
   handleAppActions(target);
 });
 
@@ -50,13 +48,31 @@ function unlockDevice() {
   if (!state.isLocked) return;
 
   if (state.unlock(passInput.value)) {
-    lockError.textContent = "";
-    lockCard.classList.remove("has-error");
-    frame.classList.remove("is-locked");
-    gsap.to(".lock-card", { y: -18, opacity: 0, duration: 0.22, ease: "power2.inOut" });
+    const tl = gsap.timeline({
+      onComplete: () => {
+        frame.classList.remove("is-locked");
+        // Stagger reveal apps
+        gsap.fromTo(".app-icon", 
+          { scale: 0.5, opacity: 0, y: 20 },
+          { scale: 1, opacity: 1, y: 0, duration: 0.6, stagger: 0.05, ease: "back.out(1.7)" }
+        );
+      }
+    });
+
+    tl.to(".lock-card", { 
+      y: -40, 
+      opacity: 0, 
+      duration: 0.5, 
+      ease: "power4.inOut" 
+    })
+    .to(".phone-frame", {
+      backgroundColor: "rgba(13, 20, 38, 0.2)",
+      duration: 0.5
+    }, "<");
+
   } else {
-    lockError.textContent = "Contrasena incorrecta. Intenta de nuevo.";
-    lockCard.classList.add("has-error");
+    lockError.textContent = "ACCESS DENIED";
+    gsap.fromTo(".lock-card", { x: -10 }, { x: 10, duration: 0.1, repeat: 5, yoyo: true });
     passInput.select();
   }
 }
@@ -66,42 +82,54 @@ function lockDevice() {
   frame.classList.add("is-locked");
   frame.dataset.view = "home";
   quickPanel.classList.remove("is-open");
-  updateStage("Home", "Selecciona una app para abrirla.");
+  
   passInput.value = "";
   lockError.textContent = "";
-  lockCard.classList.remove("has-error");
-  gsap.to(".lock-card", { y: 0, opacity: 1, duration: 0.2, ease: "power2.inOut" });
+  
+  gsap.to(".lock-card", { y: 0, opacity: 1, duration: 0.6, ease: "expo.out" });
+  gsap.to(".phone-frame", { backgroundColor: "rgba(3, 5, 10, 0.45)", duration: 0.4 });
 }
 
 function clearPassInput() {
   passInput.value = "";
   lockError.textContent = "";
-  lockCard.classList.remove("has-error");
   passInput.focus();
 }
 
 function toggleQuickPanel() {
-  if (state.isLocked) {
-    lockError.textContent = "Desbloquea para abrir Quick Settings.";
-    lockCard.classList.add("has-error");
-    return;
+  const isOpen = quickPanel.classList.toggle("is-open");
+  state.setView(isOpen ? "quick" : "home");
+  
+  if (isOpen) {
+    gsap.fromTo(".quick-item", 
+      { opacity: 0, scale: 0.8, y: 10 },
+      { opacity: 1, scale: 1, y: 0, duration: 0.4, stagger: 0.03, ease: "power2.out" }
+    );
   }
-  quickPanel.classList.toggle("is-open");
-  state.setView(quickPanel.classList.contains("is-open") ? "quick" : "home");
-  frame.dataset.view = state.currentView;
 }
 
 function navigate(view) {
   if (state.isLocked) return;
   
+  const oldView = state.currentView;
   state.setView(view);
   frame.dataset.view = view;
   quickPanel.classList.remove("is-open");
 
   if (view === "switcher") {
-    updateStage("App Switcher", "Apps abiertas recientemente.", renderSwitcher(state.recentApps));
-  } else if (view === "home") {
-    updateStage("Home", "Selecciona una app para abrirla.");
+    updateStage("Processes", "Active background tasks.", renderSwitcher(state.recentApps));
+    gsap.fromTo(".switcher-card", 
+      { x: 30, opacity: 0 }, 
+      { x: 0, opacity: 1, duration: 0.4, stagger: 0.08, ease: "power2.out" }
+    );
+  }
+
+  // Animation based on view change
+  if (view === "home") {
+    gsap.fromTo(".app-icon", 
+      { scale: 0.8, opacity: 0 }, 
+      { scale: 1, opacity: 1, duration: 0.4, stagger: 0.03, ease: "power2.out" }
+    );
   }
 }
 
@@ -117,28 +145,32 @@ function openApp(appId) {
   quickPanel.classList.remove("is-open");
 
   const content = appInfo.instance ? appInfo.instance.render() : `
-    <strong>${appInfo.label}</strong>
-    <p>Esta app aun esta en construccion dentro del MVP del shell.</p>
+    <div style="text-align: center; padding-top: 40px;">
+      <span style="font-size: 4rem; display: block; margin-bottom: 20px;">🚧</span>
+      <strong>${appInfo.label}</strong>
+      <p style="opacity: 0.6; margin-top: 12px;">This module is currently under maintenance or encrypted.</p>
+    </div>
   `;
 
-  updateStage(appInfo.label, `${appInfo.label} esta corriendo dentro de Coruscant Shell.`, content);
+  updateStage(appInfo.label, "", content);
   
   if (appId === "weather" && appInfo.instance) {
     appInfo.instance.loadWeather(appInfo.instance.city, appWindow.querySelector(".js-weather-output"));
   }
 
-  gsap.fromTo(".app-window", { y: 12, opacity: 0.6 }, { y: 0, opacity: 1, duration: 0.24 });
+  gsap.fromTo(".app-window", 
+    { scale: 0.92, opacity: 0, y: 20 }, 
+    { scale: 1, opacity: 1, y: 0, duration: 0.5, ease: "expo.out" }
+  );
 }
 
 function updateStage(title, copy, customHtml = null) {
-  stageTitle.textContent = title;
-  stageCopy.textContent = copy;
   if (customHtml) {
     appWindow.innerHTML = customHtml;
   } else {
     appWindow.innerHTML = `
-      <strong class="js-app-title">${title}</strong>
-      <p class="js-app-copy">${copy}</p>
+      <strong>${title}</strong>
+      <p>${copy}</p>
     `;
   }
 }
