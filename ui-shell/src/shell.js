@@ -36,7 +36,7 @@ export function renderShell(root) {
           <button class="lock-btn js-unlock-btn" type="button">Desbloquear</button>
           <button class="lock-btn is-ghost js-clear-pass" type="button">Limpiar</button>
         </div>
-        <small>Demo local. Clave inicial: 1138</small>
+        <small>PIN inicial: 1138 — Cambialo en Settings &gt; Ajustes de Seguridad</small>
       </section>
 
       <section class="apps-grid">

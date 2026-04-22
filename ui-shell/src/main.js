@@ -1,8 +1,18 @@
 import { gsap } from "gsap";
 import { renderShell } from "./shell.js";
+import {
+  initPin,
+  verifyPin,
+  changePin,
+  getFailedAttempts,
+  incrementFailedAttempts,
+  resetFailedAttempts,
+  isLockedOut,
+  setLockout,
+  MAX_ATTEMPTS,
+} from "./security.js";
 
 const root = document.getElementById("app");
-const LOCK_PASSWORD = "1138";
 
 const appNames = {
   calculator: "Calculadora",
@@ -117,6 +127,12 @@ root.addEventListener("click", (event) => {
 
   if (target.classList.contains("js-stopwatch-reset")) {
     resetStopwatch();
+    return;
+  }
+
+  if (target.classList.contains("js-settings-change-pin")) {
+    handleChangePinAction();
+    return;
   }
 });
 
@@ -140,17 +156,36 @@ function showLockError(message) {
   lockCard.classList.add("has-error");
 }
 
-function unlockDevice() {
+async function unlockDevice() {
   if (!isLocked()) {
     return;
   }
 
-  if (passInput.value !== LOCK_PASSWORD) {
-    showLockError("Contrasena incorrecta. Intenta de nuevo.");
-    passInput.select();
+  if (isLockedOut()) {
+    applyLockoutState();
     return;
   }
 
+  const valid = await verifyPin(passInput.value);
+
+  if (!valid) {
+    const attempts = incrementFailedAttempts();
+    const remaining = MAX_ATTEMPTS - attempts;
+
+    if (attempts >= MAX_ATTEMPTS) {
+      setLockout(true);
+      applyLockoutState();
+    } else {
+      showLockError(
+        `Contrasena incorrecta. Intentos restantes: ${remaining}.`
+      );
+      passInput.select();
+    }
+    return;
+  }
+
+  resetFailedAttempts();
+  setLockout(false);
   clearLockError();
   frame.classList.remove("is-locked");
   gsap.to(".lock-card", { y: -18, opacity: 0, duration: 0.22, ease: "power2.inOut" });
@@ -168,7 +203,56 @@ function lockDevice() {
   `;
   passInput.value = "";
   clearLockError();
+
+  if (isLockedOut()) {
+    applyLockoutState();
+  } else {
+    removeLockoutState();
+  }
+
   gsap.to(".lock-card", { y: 0, opacity: 1, duration: 0.2, ease: "power2.inOut" });
+}
+
+/**
+ * Apply the Star Wars lockout banner and disable the PIN form.
+ * Called when MAX_ATTEMPTS consecutive failures are reached.
+ */
+function applyLockoutState() {
+  const STAR_WARS_MESSAGES = [
+    "\"Este no es el PIN que buscas...\" — Obi-Wan Kenobi",
+    "\"Que el PIN esté contigo.\" Pero claramente no lo está.",
+    "\"Yo soy tu administrador.\" — Darth Vader",
+    "El Lado Oscuro de la Fuerza ha bloqueado este dispositivo.",
+  ];
+  const msg = STAR_WARS_MESSAGES[Math.floor(Math.random() * STAR_WARS_MESSAGES.length)];
+
+  lockCard.classList.add("is-locked-out");
+  showLockError(
+    `⚠️ DISPOSITIVO BLOQUEADO ⚠️\n${msg}\nDemasiados intentos fallidos (${MAX_ATTEMPTS}/${MAX_ATTEMPTS}). Contacta al administrador o borra los datos del navegador para restablecer.`
+  );
+
+  passInput.disabled = true;
+  passInput.value = "";
+  passInput.placeholder = "Dispositivo bloqueado";
+
+  const unlockBtn = lockCard.querySelector(".js-unlock-btn");
+  const clearBtn = lockCard.querySelector(".js-clear-pass");
+  if (unlockBtn) unlockBtn.disabled = true;
+  if (clearBtn) clearBtn.disabled = true;
+}
+
+/**
+ * Remove lockout state from the UI (used when lockout is cleared programmatically).
+ */
+function removeLockoutState() {
+  lockCard.classList.remove("is-locked-out");
+  passInput.disabled = false;
+  passInput.placeholder = "Ingresa tu clave";
+
+  const unlockBtn = lockCard.querySelector(".js-unlock-btn");
+  const clearBtn = lockCard.querySelector(".js-clear-pass");
+  if (unlockBtn) unlockBtn.disabled = false;
+  if (clearBtn) clearBtn.disabled = false;
 }
 
 function toggleQuickPanel() {
@@ -236,6 +320,8 @@ function openApp(appName) {
   } else if (normalizedApp === "stopwatch") {
     appWindow.innerHTML = renderStopwatchApp();
     renderStopwatchTime();
+  } else if (normalizedApp === "settings") {
+    appWindow.innerHTML = renderSettingsApp();
   } else {
     appWindow.innerHTML = renderPlaceholderApp(title);
   }
@@ -501,4 +587,114 @@ function renderStopwatchTime() {
     timeEl.textContent = formatStopwatch(stopwatchElapsedMs);
   }
 }
+
+// ─── Settings app ─────────────────────────────────────────────────────────────
+
+function renderSettingsApp() {
+  const attempts = getFailedAttempts();
+  const locked = isLockedOut();
+  return `
+    <div class="settings-app">
+      <h3>Ajustes de Seguridad</h3>
+      <fieldset class="settings-fieldset">
+        <legend>Cambiar PIN</legend>
+        <label class="settings-label" for="settings-current-pin">PIN actual</label>
+        <input
+          id="settings-current-pin"
+          class="settings-input js-settings-current-pin"
+          type="password"
+          inputmode="numeric"
+          maxlength="16"
+          placeholder="PIN actual"
+          autocomplete="current-password"
+        />
+        <label class="settings-label" for="settings-new-pin">Nuevo PIN (min. 4 digitos)</label>
+        <input
+          id="settings-new-pin"
+          class="settings-input js-settings-new-pin"
+          type="password"
+          inputmode="numeric"
+          maxlength="16"
+          placeholder="Nuevo PIN"
+          autocomplete="new-password"
+        />
+        <label class="settings-label" for="settings-confirm-pin">Confirmar nuevo PIN</label>
+        <input
+          id="settings-confirm-pin"
+          class="settings-input js-settings-confirm-pin"
+          type="password"
+          inputmode="numeric"
+          maxlength="16"
+          placeholder="Confirmar PIN"
+          autocomplete="new-password"
+        />
+        <p class="settings-msg js-settings-msg"></p>
+        <button class="settings-btn js-settings-change-pin" type="button">Guardar nuevo PIN</button>
+      </fieldset>
+      <p class="settings-info">
+        Intentos fallidos actuales: <strong>${attempts}</strong> / ${MAX_ATTEMPTS}<br/>
+        Estado del dispositivo: <strong>${locked ? "BLOQUEADO" : "Activo"}</strong>
+      </p>
+    </div>
+  `;
+}
+
+async function handleChangePinAction() {
+  const currentPinInput = root.querySelector(".js-settings-current-pin");
+  const newPinInput = root.querySelector(".js-settings-new-pin");
+  const confirmPinInput = root.querySelector(".js-settings-confirm-pin");
+  const msgEl = root.querySelector(".js-settings-msg");
+
+  if (!currentPinInput || !newPinInput || !confirmPinInput || !msgEl) {
+    return;
+  }
+
+  const currentPin = currentPinInput.value;
+  const newPin = newPinInput.value;
+  const confirmPin = confirmPinInput.value;
+
+  msgEl.className = "settings-msg js-settings-msg";
+
+  if (newPin.length < 4) {
+    msgEl.textContent = "El nuevo PIN debe tener al menos 4 digitos.";
+    return;
+  }
+
+  if (newPin !== confirmPin) {
+    msgEl.textContent = "Los PINs nuevos no coinciden.";
+    return;
+  }
+
+  const btn = root.querySelector(".js-settings-change-pin");
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Guardando...";
+  }
+
+  const success = await changePin(currentPin, newPin);
+
+  if (btn) {
+    btn.disabled = false;
+    btn.textContent = "Guardar nuevo PIN";
+  }
+
+  if (success) {
+    msgEl.textContent = "✓ PIN cambiado correctamente.";
+    msgEl.classList.add("is-success");
+    currentPinInput.value = "";
+    newPinInput.value = "";
+    confirmPinInput.value = "";
+  } else {
+    msgEl.textContent = "PIN actual incorrecto.";
+  }
+}
+
+// ─── Security bootstrap ───────────────────────────────────────────────────────
+
+(async () => {
+  await initPin();
+  if (isLockedOut()) {
+    applyLockoutState();
+  }
+})();
 

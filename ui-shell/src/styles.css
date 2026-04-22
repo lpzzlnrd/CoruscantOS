@@ -129,6 +129,26 @@ body {
   box-shadow: 0 10px 30px rgba(255, 0, 0, 0.15);
 }
 
+/* Security lockout — Star Wars themed alert */
+.lock-card.is-locked-out {
+  border-color: rgba(255, 80, 0, 0.85);
+  box-shadow: 0 10px 40px rgba(255, 60, 0, 0.35);
+  background: linear-gradient(160deg, rgba(60, 10, 0, 0.55), rgba(30, 5, 0, 0.45));
+}
+
+.lock-card.is-locked-out .lock-error {
+  color: #ffb347;
+  font-size: 0.78rem;
+  white-space: pre-line;
+  line-height: 1.5;
+}
+
+.lock-input:disabled,
+.lock-btn:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+}
+
 .lock-card small {
   display: block;
   margin-top: 8px;
@@ -410,4 +430,90 @@ body {
 .phone-frame[data-view="app"] .app-stage,
 .phone-frame[data-view="switcher"] .app-stage {
   display: grid;
+}
+
+/* ─── Settings app ──────────────────────────────────────────────────────── */
+
+.settings-app {
+  width: 100%;
+  display: grid;
+  gap: 10px;
+}
+
+.settings-app h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--accent);
+}
+
+.settings-fieldset {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px;
+  display: grid;
+  gap: 6px;
+}
+
+.settings-fieldset legend {
+  font-size: 0.8rem;
+  color: var(--muted);
+  padding: 0 4px;
+}
+
+.settings-label {
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.settings-input {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  padding: 8px 10px;
+  font-size: 0.9rem;
+}
+
+.settings-input::placeholder {
+  color: rgba(247, 251, 255, 0.5);
+}
+
+.settings-btn {
+  margin-top: 6px;
+  min-height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(127, 208, 255, 0.5);
+  background: linear-gradient(140deg, rgba(127, 208, 255, 0.28), rgba(127, 208, 255, 0.1));
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.settings-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.settings-msg {
+  min-height: 16px;
+  margin: 4px 0 0;
+  font-size: 0.78rem;
+  color: #ffb2b2;
+}
+
+.settings-msg.is-success {
+  color: #7fffb0;
+}
+
+.settings-info {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.78rem;
+  color: var(--muted);
+  line-height: 1.6;
 }
