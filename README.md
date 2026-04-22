@@ -37,18 +37,18 @@ Reúne la definición funcional y técnica del proyecto:
 
 - `01-vision.md`: objetivo del producto, principios y alcance del MVP.
 - `02-architecture.md`: capas del sistema (kernel, base Linux, display/compositor, shell y apps).
-- `03-build-qemu.md`: guia para construir y arrancar el sistema en QEMU ARM64.
+- `03-build-qemu.md`: guía para construir y arrancar el sistema en QEMU ARM64.
 - `04-ui-guidelines.md`: lineamientos visuales y de UX para la shell.
-- `05-roadmap.md`: fases de evolucion desde MVP hasta ecosistema.
+- `05-roadmap.md`: fases de evolución desde MVP hasta ecosistema.
 
 ### 2) `os/postmarketos/` - Base del sistema operativo
 
 Contiene la base Linux sobre postmarketOS/Alpine y perfiles de dispositivo.
-Actualmente define el target inicial virtual para validar el arranque, el pipeline de imagen y la integracion de la shell.
+Actualmente define el target inicial virtual para validar el arranque, el pipeline de imagen y la integración de la shell.
 
 ### 3) `ui-shell/` - Interfaz gráfica (Coruscant Shell)
 
-Implementa el frontend de la experiencia movil (HTML/CSS/JS), construido con Vite.
+Implementa el frontend de la experiencia móvil (HTML/CSS/JS), construido con Vite.
 Aquí se desarrolla la capa visible del sistema: pantalla de bloqueo, home, dock, quick settings y transiciones.
 
 ### 4) `scripts/` - Automatización operativa
@@ -56,7 +56,7 @@ Aquí se desarrolla la capa visible del sistema: pantalla de bloqueo, home, dock
 Incluye scripts para preparar el entorno, compilar imagenes y ejecutar QEMU:
 
 - `setup-host.sh`: prepara dependencias base en Linux.
-- `build-image.sh`: flujo de construcción de imagen.
+- `build-image.sh`: flujo de construcción de imágenes.
 - `run-qemu.sh`: arranque de la imagen en emulación ARM64.
 - `setup-wsl.ps1` y `dev-ui.cmd`: soporte de flujo en Windows/WSL.
 
