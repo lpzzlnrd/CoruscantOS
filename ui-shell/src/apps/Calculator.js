@@ -5,38 +5,43 @@ export class CalculatorApp {
 
   render() {
     return `
-      <div class="calc-app">
-        <label for="calc-display" class="calc-label">Calculadora</label>
-        <output id="calc-display" class="calc-display js-calc-display">${this.expression}</output>
-        <div class="calc-grid">
-          <button class="calc-btn js-calc-btn" data-calc-action="clear" type="button">C</button>
-          <button class="calc-btn js-calc-btn" data-calc-action="backspace" type="button">DEL</button>
-          <button class="calc-btn js-calc-btn" data-calc-value="/" type="button">/</button>
-          <button class="calc-btn js-calc-btn" data-calc-value="*" type="button">x</button>
+      <div style="display: flex; flex-direction: column; height: 100%; justify-content: flex-end; padding-bottom: 10px;">
+        <div style="text-align: right; padding: 20px; min-height: 100px; display: flex; flex-direction: column; justify-content: flex-end;">
+          <div style="color: rgba(255,255,255,0.5); font-size: 1.2rem; min-height: 1.5rem; letter-spacing: 2px;"></div>
+          <div style="color: white; font-size: 3.5rem; font-weight: 300; letter-spacing: -1px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" class="js-calc-display">${this.expression}</div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+          <button class="js-calc-btn" data-calc-action="clear" type="button" style="height: 65px; border-radius: 50%; background: #a5a5a5; color: black; border: none; font-size: 1.5rem; font-weight: 500; cursor: pointer;">AC</button>
+          <button class="js-calc-btn" data-calc-action="backspace" type="button" style="height: 65px; border-radius: 50%; background: #a5a5a5; color: black; border: none; font-size: 1.5rem; font-weight: 500; cursor: pointer;">⌫</button>
+          <button class="js-calc-btn" data-calc-value="%" type="button" style="height: 65px; border-radius: 50%; background: #a5a5a5; color: black; border: none; font-size: 1.5rem; font-weight: 500; cursor: pointer;">%</button>
+          <button class="js-calc-btn" data-calc-value="/" type="button" style="height: 65px; border-radius: 50%; background: #ff9f43; color: white; border: none; font-size: 1.8rem; font-weight: 500; cursor: pointer;">÷</button>
 
-          <button class="calc-btn js-calc-btn" data-calc-value="7" type="button">7</button>
-          <button class="calc-btn js-calc-btn" data-calc-value="8" type="button">8</button>
-          <button class="calc-btn js-calc-btn" data-calc-value="9" type="button">9</button>
-          <button class="calc-btn js-calc-btn" data-calc-value="-" type="button">-</button>
+          <button class="js-calc-btn" data-calc-value="7" type="button" style="height: 65px; border-radius: 50%; background: rgba(255,255,255,0.15); color: white; border: none; font-size: 1.8rem; font-weight: 400; cursor: pointer;">7</button>
+          <button class="js-calc-btn" data-calc-value="8" type="button" style="height: 65px; border-radius: 50%; background: rgba(255,255,255,0.15); color: white; border: none; font-size: 1.8rem; font-weight: 400; cursor: pointer;">8</button>
+          <button class="js-calc-btn" data-calc-value="9" type="button" style="height: 65px; border-radius: 50%; background: rgba(255,255,255,0.15); color: white; border: none; font-size: 1.8rem; font-weight: 400; cursor: pointer;">9</button>
+          <button class="js-calc-btn" data-calc-value="*" type="button" style="height: 65px; border-radius: 50%; background: #ff9f43; color: white; border: none; font-size: 1.8rem; font-weight: 500; cursor: pointer;">×</button>
 
-          <button class="calc-btn js-calc-btn" data-calc-value="4" type="button">4</button>
-          <button class="calc-btn js-calc-btn" data-calc-value="5" type="button">5</button>
-          <button class="calc-btn js-calc-btn" data-calc-value="6" type="button">6</button>
-          <button class="calc-btn js-calc-btn" data-calc-value="+" type="button">+</button>
+          <button class="js-calc-btn" data-calc-value="4" type="button" style="height: 65px; border-radius: 50%; background: rgba(255,255,255,0.15); color: white; border: none; font-size: 1.8rem; font-weight: 400; cursor: pointer;">4</button>
+          <button class="js-calc-btn" data-calc-value="5" type="button" style="height: 65px; border-radius: 50%; background: rgba(255,255,255,0.15); color: white; border: none; font-size: 1.8rem; font-weight: 400; cursor: pointer;">5</button>
+          <button class="js-calc-btn" data-calc-value="6" type="button" style="height: 65px; border-radius: 50%; background: rgba(255,255,255,0.15); color: white; border: none; font-size: 1.8rem; font-weight: 400; cursor: pointer;">6</button>
+          <button class="js-calc-btn" data-calc-value="-" type="button" style="height: 65px; border-radius: 50%; background: #ff9f43; color: white; border: none; font-size: 2rem; font-weight: 500; cursor: pointer;">−</button>
 
-          <button class="calc-btn js-calc-btn" data-calc-value="1" type="button">1</button>
-          <button class="calc-btn js-calc-btn" data-calc-value="2" type="button">2</button>
-          <button class="calc-btn js-calc-btn" data-calc-value="3" type="button">3</button>
-          <button class="calc-btn is-equal js-calc-btn" data-calc-action="equals" type="button">=</button>
+          <button class="js-calc-btn" data-calc-value="1" type="button" style="height: 65px; border-radius: 50%; background: rgba(255,255,255,0.15); color: white; border: none; font-size: 1.8rem; font-weight: 400; cursor: pointer;">1</button>
+          <button class="js-calc-btn" data-calc-value="2" type="button" style="height: 65px; border-radius: 50%; background: rgba(255,255,255,0.15); color: white; border: none; font-size: 1.8rem; font-weight: 400; cursor: pointer;">2</button>
+          <button class="js-calc-btn" data-calc-value="3" type="button" style="height: 65px; border-radius: 50%; background: rgba(255,255,255,0.15); color: white; border: none; font-size: 1.8rem; font-weight: 400; cursor: pointer;">3</button>
+          <button class="js-calc-btn" data-calc-value="+" type="button" style="height: 65px; border-radius: 50%; background: #ff9f43; color: white; border: none; font-size: 1.8rem; font-weight: 500; cursor: pointer;">+</button>
 
-          <button class="calc-btn calc-zero js-calc-btn" data-calc-value="0" type="button">0</button>
-          <button class="calc-btn js-calc-btn" data-calc-value="." type="button">.</button>
+          <button class="js-calc-btn" data-calc-value="0" type="button" style="height: 65px; grid-column: span 2; border-radius: 35px; background: rgba(255,255,255,0.15); color: white; border: none; font-size: 1.8rem; font-weight: 400; cursor: pointer; text-align: left; padding-left: 25px;">0</button>
+          <button class="js-calc-btn" data-calc-value="." type="button" style="height: 65px; border-radius: 50%; background: rgba(255,255,255,0.15); color: white; border: none; font-size: 1.8rem; font-weight: 400; cursor: pointer;">.</button>
+          <button class="js-calc-btn" data-calc-action="equals" type="button" style="height: 65px; border-radius: 50%; background: #ff9f43; color: white; border: none; font-size: 1.8rem; font-weight: 500; cursor: pointer;">=</button>
         </div>
       </div>
     `;
   }
 
-  handleAction(target) {
+  handleAction(target, renderCallback) {
+    if (!target.classList.contains("js-calc-btn")) return;
     const action = target.dataset.calcAction;
     const value = target.dataset.calcValue;
 
@@ -47,9 +52,13 @@ export class CalculatorApp {
     } else if (action === "equals") {
       this.expression = this.evaluate(this.expression);
     } else if (value) {
-      this.expression = this.appendValue(this.expression, value);
+      if (value === "%") {
+        this.expression = String(Number(this.evaluate(this.expression)) / 100);
+      } else {
+        this.expression = this.appendValue(this.expression, value);
+      }
     }
-    return this.expression;
+    if (renderCallback) renderCallback();
   }
 
   appendValue(current, next) {

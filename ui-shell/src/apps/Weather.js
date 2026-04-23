@@ -34,6 +34,21 @@ export class WeatherApp {
     `;
   }
 
+  onMount(container) {
+    const outputEl = container.querySelector('.js-weather-output');
+    this.loadWeather(this.city, outputEl);
+  }
+
+  handleAction(target) {
+    if (target.classList.contains("js-weather-load")) {
+      const cityInput = document.querySelector(".js-weather-city");
+      const outputEl = document.querySelector(".js-weather-output");
+      if (cityInput && outputEl) {
+        this.loadWeather(cityInput.value, outputEl);
+      }
+    }
+  }
+
   async loadWeather(city, outputEl) {
     if (!outputEl) return;
     this.city = city;

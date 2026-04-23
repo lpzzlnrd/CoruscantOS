@@ -1,18 +1,31 @@
 import { CalculatorApp } from "../apps/Calculator.js";
 import { WeatherApp } from "../apps/Weather.js";
 import { StopwatchApp } from "../apps/Stopwatch.js";
+import { PhoneApp } from "../apps/Phone.js";
+import { CameraApp } from "../apps/Camera.js";
+import { NotesApp } from "../apps/Notes.js";
+import { CalendarApp } from "../apps/Calendar.js";
+import { SettingsApp } from "../apps/Settings.js";
+import { MusicApp } from "../apps/Music.js";
+import { FlappyApp } from "../apps/Flappy.js";
+import { MessagesApp } from "../apps/Messages.js";
 
 export class AppManager {
   constructor() {
     this.apps = {
-      calculator: { id: "calculator", label: "Calculadora", icon: "icon-calc", Class: CalculatorApp },
-      weather: { id: "weather", label: "Clima", icon: "icon-weather", Class: WeatherApp },
-      stopwatch: { id: "stopwatch", label: "Cronometro", icon: "icon-stopwatch", Class: StopwatchApp },
-      maps: { id: "maps", label: "Maps", icon: "icon-maps" },
-      music: { id: "music", label: "Music", icon: "icon-music" },
-      camera: { id: "camera", label: "Camera", icon: "icon-camera" },
-      files: { id: "files", label: "Files", icon: "icon-files" },
-      settings: { id: "settings", label: "Settings", icon: "icon-settings" }
+      phone: { id: "phone", label: "Teléfono", icon: "icon-phone", logo: "📞", Class: PhoneApp },
+      messages: { id: "messages", label: "Mensajes", icon: "icon-mail", logo: "💬", Class: MessagesApp },
+      calculator: { id: "calculator", label: "Calculadora", icon: "icon-calc", logo: "🧮", Class: CalculatorApp },
+      weather: { id: "weather", label: "Clima", icon: "icon-weather", logo: "🌤️", Class: WeatherApp },
+      stopwatch: { id: "stopwatch", label: "Cronometro", icon: "icon-stopwatch", logo: "⏱️", Class: StopwatchApp },
+      maps: { id: "maps", label: "Mapas", icon: "icon-maps", logo: "🗺️" },
+      music: { id: "music", label: "Musica", icon: "icon-music", logo: "🎵", Class: MusicApp },
+      camera: { id: "camera", label: "Camara", icon: "icon-camera", logo: "📷", Class: CameraApp },
+      files: { id: "files", label: "Archivos", icon: "icon-files", logo: "📁" },
+      settings: { id: "settings", label: "Ajustes", icon: "icon-settings", logo: "⚙️", Class: SettingsApp },
+      flappy: { id: "flappy", label: "Flappy Bird", icon: "icon-browser", logo: "🎮", Class: FlappyApp },
+      notes: { id: "notes", label: "Notas", icon: "icon-notes", logo: "📝", Class: NotesApp },
+      calendar: { id: "calendar", label: "Agenda", icon: "icon-calendar", logo: "📅", Class: CalendarApp }
     };
     this.instances = {};
   }

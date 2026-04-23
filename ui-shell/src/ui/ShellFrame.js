@@ -45,7 +45,7 @@ export function renderShellFrame(apps) {
           .map(
             (app) => `
           <button class="app-icon js-app" type="button" data-app="${app.id}">
-            <div class="glyph ${app.icon}"></div>
+            <div class="glyph ${app.icon}">${app.logo || ""}</div>
             <span>${app.label}</span>
           </button>
         `

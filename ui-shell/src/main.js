@@ -113,6 +113,15 @@ function navigate(view) {
   
   const oldView = state.currentView;
   state.setView(view);
+
+  // Call onUnmount if leaving an app
+  if (oldView === "app" && view !== "app" && window.currentActiveAppId) {
+    const activeApp = appManager.getApp(window.currentActiveAppId);
+    if (activeApp && activeApp.instance && typeof activeApp.instance.onUnmount === "function") {
+      activeApp.instance.onUnmount();
+    }
+    window.currentActiveAppId = null;
+  }
   frame.dataset.view = view;
   quickPanel.classList.remove("is-open");
 
@@ -143,6 +152,7 @@ function openApp(appId) {
   state.setView("app");
   frame.dataset.view = "app";
   quickPanel.classList.remove("is-open");
+  window.currentActiveAppId = appId;
 
   const content = appInfo.instance ? appInfo.instance.render() : `
     <div style="text-align: center; padding-top: 40px;">
@@ -156,6 +166,10 @@ function openApp(appId) {
   
   if (appId === "weather" && appInfo.instance) {
     appInfo.instance.loadWeather(appInfo.instance.city, appWindow.querySelector(".js-weather-output"));
+  }
+
+  if (appInfo.instance && typeof appInfo.instance.onMount === "function") {
+    appInfo.instance.onMount(appWindow);
   }
 
   gsap.fromTo(".app-window", 
@@ -176,32 +190,11 @@ function updateStage(title, copy, customHtml = null) {
 }
 
 function handleAppActions(target) {
-  if (state.currentView !== "app") return;
-
-  // Calculator
-  if (target.classList.contains("js-calc-btn")) {
-    const calc = appManager.getApp("calculator").instance;
-    const result = calc.handleAction(target);
-    const display = appWindow.querySelector(".js-calc-display");
-    if (display) display.textContent = result;
-  }
-
-  // Weather
-  if (target.classList.contains("js-weather-load")) {
-    const weather = appManager.getApp("weather").instance;
-    const city = appWindow.querySelector(".js-weather-city").value;
-    weather.loadWeather(city, appWindow.querySelector(".js-weather-output"));
-  }
-
-  // Stopwatch
-  const isStopwatch = target.className.includes("stopwatch-btn");
-  if (isStopwatch) {
-    const sw = appManager.getApp("stopwatch").instance;
-    const display = appWindow.querySelector(".js-stopwatch-time");
-    const onTick = (val) => { if (display) display.textContent = val; };
-
-    if (target.classList.contains("js-stopwatch-start")) sw.start(onTick);
-    if (target.classList.contains("js-stopwatch-pause")) sw.pause();
-    if (target.classList.contains("js-stopwatch-reset")) sw.reset(onTick);
+  if (state.currentView !== "app" || !window.currentActiveAppId) return;
+  const activeApp = appManager.getApp(window.currentActiveAppId);
+  if (activeApp && activeApp.instance && typeof activeApp.instance.handleAction === "function") {
+    activeApp.instance.handleAction(target, () => {
+      updateStage(activeApp.label, "", activeApp.instance.render());
+    });
   }
 }
